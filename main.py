@@ -1,20 +1,39 @@
-# Install discord using: python3 -m pip install -U discord.py
+"""
+Documentation:
+https://www.hostinger.com/tutorials/how-to-host-discord-bot
+"""
 
+# Import the required modules
 import discord
 import os
+from discord.ext import commands 
+from dotenv import load_dotenv
 
-client = discord.Client()
+# Create a Discord client instance and set the command prefix
+intents = discord.Intents.all()
+client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-@client.event
+# Set the confirmation message when the bot is ready
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print(f'Logged in as {bot.user.name}')
+# Set the commands for your bot
+@bot.command()
+async def greet(ctx):
+    response = 'Hello, I am your discord bot'
+    await ctx.send(response)
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+@bot.command()
+async def list_command(ctx):
+    response = 'You can use the following commands: \n !greet \n !list_command \n !functions'
+    await ctx.send(response)
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+@bot.command()
+async def functions(ctx):
+    response = 'I am a simple Discord chatbot! I will reply to your command!'
+    await ctx.send(response)
 
-client.run(os.getenv('TOKEN'))
+# Retrieve token from the .env file
+load_dotenv()
+bot.run(os.getenv('TOKEN'))
